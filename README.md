@@ -1,6 +1,6 @@
 # GraspXL: Generating Grasping Motions for Diverse Objects at Scale
 
-## [Paper](https://arxiv.org/pdf/2403.19649.pdf) | [Project Page](https://eth-ait.github.io/graspxl/) | [Video](https://youtu.be/0-dRbxmX2PI)
+## [Paper](https://arxiv.org/pdf/2403.19649.pdf) | [Project Page](https://eth-ait.github.io/graspxl/) | [Video](https://youtu.be/0-dRbxmX2PI) | [Dataset](https://huggingface.co/datasets/ethHuiZhang/GraspXL)
 
 <img src="/tease_more.jpg" /> 
 
@@ -15,24 +15,28 @@
 7. [License](#license)
 
 ## News
-[2024.11] **We released the grasping motion data for the LEAP hand model on a subset of our objects!**
+[2026.05] **We uploaded the GraspXL dataset to [Hugging Face](https://huggingface.co/datasets/ethHuiZhang/GraspXL). We also updated data for the new tabletop grasping setting of MANO, Allegro, and Shadow hands. For MANO, we additionally fixed the unnatural little-finger motions.**
 
-[2024.10] **We released the script in [URDF_gen_from_obj](./raisimGymTorch/raisimGymTorch/helper/URDF_gen_from_obj) to pre-process new objects. Put the .obj files you want to grasp (make sure they have meaningful sizes for grasping) under [URDF_gen_from_obj/temp](./raisimGymTorch/raisimGymTorch/helper/URDF_gen_from_obj/) and run [urdf_gen.py](./raisimGymTorch/raisimGymTorch/helper/URDF_gen_from_obj/urdf_gen.py), then it will generate a folder with the processed objects and the urdf files in [rsc](./rsc), which you can further utilize to generate grasping motions with any environment scripts.**
+[2026.05] **We also updated the visualizer [GraspXL_visualization](https://github.com/zdchan/GraspXL_visualization) for the new tabletop grasping setting.**
 
-[2024.08] **Data example & viewer released!**
+[2024.11] We released the grasping motion data for the LEAP hand model on a subset of our objects!
 
-[2024.08] **Code released!**
+[2024.10] We released the script in [URDF_gen_from_obj](./raisimGymTorch/raisimGymTorch/helper/URDF_gen_from_obj) to pre-process new objects. Put the .obj files you want to grasp (make sure they have meaningful sizes for grasping) under [URDF_gen_from_obj/temp](./raisimGymTorch/raisimGymTorch/helper/URDF_gen_from_obj/) and run [urdf_gen.py](./raisimGymTorch/raisimGymTorch/helper/URDF_gen_from_obj/urdf_gen.py), then it will generate a folder with the processed objects and the urdf files in [rsc](./rsc), which you can further utilize to generate grasping motions with any environment scripts.
 
-[2024.07] **The large-scale generated motions for 500k+ objects, each with diverse objectives and currently MANO and Allegro hand models, are ready to download! If you are interested, just fill [this form](https://forms.gle/dNwaGvtb4ppi1HZt5) to get access!**
+[2024.08] Data example & viewer released!
 
-**We will continuously enrich the dataset (e.g., motions generated with more hand models, more grasping motions generated with different objectives, etc) and keep you updated!**
+[2024.08] Code released!
+
+[2024.07] The large-scale generated motions for 500k+ objects, each with diverse objectives and currently MANO and Allegro hand models, are ready to download! If you are interested, ~~just fill [this form](https://forms.gle/dNwaGvtb4ppi1HZt5) to get access!~~ just download it from [Hugging Face](https://huggingface.co/datasets/ethHuiZhang/GraspXL).
+
+We will continuously enrich the dataset (e.g., motions generated with more hand models, more grasping motions generated with different objectives, etc) and keep you updated!
 
 [2024.03] **~~The code will be released soon.~~ Please fill out [this form](https://forms.gle/dNwaGvtb4ppi1HZt5) if you want to get the notification for any update!**
 
 
 
 ## Dataset
-The dataset has been released, including the grasping motion sequences of different robot hands for 500k+ objects. Check [docs/DATASET.md](./docs/DATASET.md) for details and instructions. 
+The dataset has been released, including the grasping motion sequences of different robot hands for 500k+ objects (for both diverse approaching direction setting and tabletop setting). Check [Hugging Face](https://huggingface.co/datasets/ethHuiZhang/GraspXL) for details and instructions.
 
 For an easier trial of the dataset, we give some examples (30 objects) of the data in the [dataset_example](./dataset_example) subfolder.
 
