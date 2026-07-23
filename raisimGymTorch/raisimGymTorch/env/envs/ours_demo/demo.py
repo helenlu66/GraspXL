@@ -23,7 +23,13 @@ import torch
 
 data_version = "chiral_220223"
 ref_r = [0.09566994, 0.00638343, 0.0061863]
-path_mean_r = os.path.join("./../rsc/mano_double/right_pose_mean.txt")
+
+# resolve paths relative to this script's location so demo.py can be run from any cwd
+task_path = os.path.dirname(os.path.realpath(__file__))
+home_path = os.path.normpath(os.path.join(task_path, "..", "..", "..", "..", ".."))
+raisimgymtorch_path = os.path.normpath(os.path.join(task_path, "..", "..", "..", ".."))
+
+path_mean_r = os.path.join(home_path, "rsc", "mano_double", "right_pose_mean.txt")
 pose_mean_r = np.loadtxt(path_mean_r)
 
 
@@ -55,9 +61,6 @@ print(f"Experiment name: \"{args.exp_name}\"")
 task_name = args.exp_name
 # check if gpu is available
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# directories
-task_path = os.path.dirname(os.path.realpath(__file__))
-home_path = task_path + "/../../../../.."
 
 if args.logdir is None:
     exp_path = home_path
@@ -296,14 +299,14 @@ for update in range(25):
             data[obj_item]['rot'] = np.float32(rot_obj[:])
             data[obj_item]['angle'] = np.float32(angle_obj[:])
 
-            if not os.path.exists(f"./data_all/diverse_seq_npy/"):
-                os.makedirs(f"./data_all/diverse_seq_npy/")
-            if not os.path.exists(f"./data_all/diverse_seq_obj/"):
-                os.makedirs(f"./data_all/diverse_seq_obj/")
+            npy_dir = os.path.join(raisimgymtorch_path, "data_all", "diverse_seq_npy")
+            obj_dir = os.path.join(raisimgymtorch_path, "data_all", "diverse_seq_obj")
+            os.makedirs(npy_dir, exist_ok=True)
+            os.makedirs(obj_dir, exist_ok=True)
 
-            np.save(f"./data_all/diverse_seq_npy/{obj_item}.npy", data)
+            np.save(os.path.join(npy_dir, f"{obj_item}.npy"), data)
 
             obj_file = directory_path + obj_item + "/top_watertight_tiny.obj"
-            shutil.copy(obj_file, f"./data_all/diverse_seq_obj/{obj_item}.obj")
+            shutil.copy(obj_file, os.path.join(obj_dir, f"{obj_item}.obj"))
 
     print("end")

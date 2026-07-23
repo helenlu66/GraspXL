@@ -14,6 +14,11 @@ import trimesh
 # from bps_torch.bps import bps_torch
 
 from raisimGymTorch.helper import rotations
+
+# resolve the rsc/ dir relative to this file's location so callers can run from any cwd
+_RSC_DIR = os.path.normpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "..", "..", "rsc"))
+
+
 class RaisimGymVecEnvTest:
 
     def __init__(self, obj_list, impl, cfg, normalize_ob=False, seed=0, normalize_rew=True, clip_obs=10., cat_name=None, cent_training=False):
@@ -55,7 +60,7 @@ class RaisimGymVecEnvTest:
         self.non_affordance_center = np.zeros((len(obj_list),3), 'float32')
 
         for obj_name in np.unique(obj_list):
-            aff_mesh_name = f'../rsc/{cat_name}/{obj_name}/top_watertight_tiny.obj'
+            aff_mesh_name = os.path.join(_RSC_DIR, str(cat_name), obj_name, 'top_watertight_tiny.obj')
             aff_mesh = trimesh.load_mesh(aff_mesh_name)
             aff_points, aff_face_id = trimesh.sample.sample_surface(aff_mesh, 200)
             aff_normals = aff_mesh.face_normals[aff_face_id]
@@ -63,7 +68,7 @@ class RaisimGymVecEnvTest:
             # aff_center = trimesh.PointCloud(aff_points).centroid
             aff_center = aff_mesh.centroid
 
-            non_aff_mesh_name = f'../rsc/{cat_name}/{obj_name}/bottom_watertight_tiny.obj'
+            non_aff_mesh_name = os.path.join(_RSC_DIR, str(cat_name), obj_name, 'bottom_watertight_tiny.obj')
             non_aff_mesh = trimesh.load_mesh(non_aff_mesh_name)
             non_aff_points, non_aff_face_id = trimesh.sample.sample_surface(non_aff_mesh, 200)
             non_aff_normals = non_aff_mesh.face_normals[non_aff_face_id]
