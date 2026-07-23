@@ -18,7 +18,7 @@ import numpy as np
 import argparse
 from raisimGymTorch.helper import rotations
 
-import torch
+import torch  
 
 
 data_version = "chiral_220223"
@@ -48,6 +48,12 @@ parser.add_argument('-e', '--exp_name', help='exp_name', type=str, default=exp_n
 parser.add_argument('-w', '--weight', type=str, default=weight_saved)
 parser.add_argument('-sd', '--storedir', type=str, default='data_all')
 parser.add_argument('-seed', '--seed', type=int, default=1)
+parser.add_argument('-o', '--object', type=str, default=None,
+                     help='Specific object name to load (default: random). See --select-object to pick interactively.')
+parser.add_argument('-oi', '--object-index', type=int, default=None,
+                     help='Select object by index instead of name (0-based, matches the --select-object listing).')
+parser.add_argument('--select-object', action='store_true',
+                     help='If --object/--object-index are not given, list available objects and prompt to pick one (by name or index) instead of choosing randomly.')
 
 
 args = parser.parse_args()
@@ -89,8 +95,39 @@ folder_names = [item for item in items if os.path.isdir(os.path.join(directory_p
 
 obj_path_list = []
 obj_ori_list = folder_names
+sorted_obj_list = sorted(obj_ori_list)
 
-obj_list = [choice(obj_ori_list)]
+
+def _resolve_object(text):
+    """Resolve user input as either an object name or a 0-based index into sorted_obj_list."""
+    if text in obj_ori_list:
+        return text
+    if text.isdigit() and 0 <= int(text) < len(sorted_obj_list):
+        return sorted_obj_list[int(text)]
+    return None
+
+
+if args.object is not None:
+    if args.object not in obj_ori_list:
+        parser.error(
+            f"Unknown --object '{args.object}'. Available objects:\n  "
+            + "\n  ".join(sorted_obj_list)
+        )
+    obj_list = [args.object]
+elif args.object_index is not None:
+    if not (0 <= args.object_index < len(sorted_obj_list)):
+        parser.error(f"--object-index {args.object_index} out of range (0-{len(sorted_obj_list) - 1}).")
+    obj_list = [sorted_obj_list[args.object_index]]
+elif args.select_object:
+    print("Available objects:")
+    for i, name in enumerate(sorted_obj_list):
+        print(f"  [{i}] {name}")
+    selected = _resolve_object(input("Select an object (name or index): ").strip())
+    while selected is None:
+        selected = _resolve_object(input("Unknown object. Select an object (name or index): ").strip())
+    obj_list = [selected]
+else:
+    obj_list = [choice(obj_ori_list)]
 print(obj_list)
 
 num_envs = len(obj_list)
