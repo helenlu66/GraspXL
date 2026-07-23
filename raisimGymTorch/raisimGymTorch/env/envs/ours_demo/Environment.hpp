@@ -174,6 +174,16 @@ namespace raisim {
                 server_ = std::make_unique<raisim::RaisimServer>(world_.get());
                 server_->launchServer();
 
+                /// default camera framing: close to the table/object spawn point (~1.1, 0, 0.55)
+                /// instead of RaiSimUnity's default distant view, so the grasp is visible on connect
+                server_->setCameraPositionAndLookAt({2.0, -1.4, 1.4}, {1.1, 0.0, 0.55});
+
+                /// RaiSimUnity's scroll-zoom and left-drag orbit only activate once an object
+                /// is focused/selected (FOCUS_ON_SPECIFIC_OBJECT) -- otherwise they're silent
+                /// no-ops. Repeat the focus request for the first N substeps (matches
+                /// artigrasp/general_two/Environment.hpp) so it lands once Unity connects.
+                camera_focus_frames_ = 500;
+
                 /// Create table
 //                table_top = server_->addVisualBox("tabletop", 2.0, 1.0, 0.05, 0.44921875, 0.30859375, 0.1953125, 1, "");
 //                table_top->setPosition(1.25, 0, 0.475);
@@ -503,6 +513,10 @@ namespace raisim {
 
             /// Apply N control steps
             for (int i = 0; i < int(control_dt_ / simulation_dt_ + 1e-10); i++){
+                if (visualizable_ && server_ && camera_focus_frames_ > 0) {
+                    server_->focusOn(mano_r_);
+                    camera_focus_frames_--;
+                }
                 if(server_) server_->lockVisualizationServerMutex();
                 world_->integrate();
                 if(server_) server_->unlockVisualizationServerMutex();
@@ -768,6 +782,7 @@ namespace raisim {
         bool unseen = false;
         bool new_category = false;
         bool lift = false;
+        int camera_focus_frames_ = 0;
         raisim::ArticulatedSystem* mano_;
         Eigen::VectorXd gc_r_, gv_r_, pTarget_r_, pTarget6_r_, vTarget_r_, gc_set_r_, gv_set_r_;
         Eigen::VectorXd obj_pos_init_;
