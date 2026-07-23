@@ -28,6 +28,11 @@ data/*
 
 raisimGymTorch/raisimGymTorch/env/bin/
 
+# Demo / eval outputs (regenerable; keep upstream checkpoints in data_all/*/)
+raisimGymTorch/data_all/diverse_seq_npy/
+raisimGymTorch/data_all/diverse_seq_obj/
+raisimGymTorch/data_all/*/eval/
+
 *.png
 
 *.zip
