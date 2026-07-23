@@ -45,6 +45,9 @@ class CMakeBuild(build_ext):
         if __CMAKE_PREFIX_PATH__ is not None:
             cmake_args.append('-DCMAKE_PREFIX_PATH=' + __CMAKE_PREFIX_PATH__)
 
+        # CMake 4.x removed compatibility with legacy minimum versions in vendored pybind11.
+        cmake_args.append('-DCMAKE_POLICY_VERSION_MINIMUM=3.5')
+
         cfg = 'Debug' if __DEBUG__ else 'Release'
         build_args = ['--config', cfg]
 

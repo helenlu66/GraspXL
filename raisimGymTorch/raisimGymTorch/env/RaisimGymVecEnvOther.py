@@ -20,6 +20,7 @@ class RaisimGymVecEnvTest:
         if platform.system() == "Darwin":
             os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.normalize_ob = normalize_ob
         self.normalize_rew = normalize_rew
         self.clip_obs = clip_obs
@@ -87,10 +88,10 @@ class RaisimGymVecEnvTest:
                         self.non_affordance_center[i] = non_aff_center
                     else:
                         self.non_affordance_center[i, :] = 100
-        self.affordance_pcd = torch.tensor(self.affordance_pcd).float().to('cuda')
-        self.affordance_normals = torch.tensor(self.affordance_normals).float().to('cuda')
-        self.non_affordance_pcd = torch.tensor(self.non_affordance_pcd).float().to('cuda')
-        self.non_affordance_normals = torch.tensor(self.non_affordance_normals).float().to('cuda')
+        self.affordance_pcd = torch.tensor(self.affordance_pcd).float().to(self.device)
+        self.affordance_normals = torch.tensor(self.affordance_normals).float().to(self.device)
+        self.non_affordance_pcd = torch.tensor(self.non_affordance_pcd).float().to(self.device)
+        self.non_affordance_normals = torch.tensor(self.non_affordance_normals).float().to(self.device)
 
 
     def seed(self, seed=None):
@@ -167,9 +168,9 @@ class RaisimGymVecEnvTest:
         num_envs = global_state.shape[0]
 
         if allegro:
-            joints = torch.from_numpy(global_state[:, 54:105].reshape(num_envs, -1, 3)).to('cuda')
+            joints = torch.from_numpy(global_state[:, 54:105].reshape(num_envs, -1, 3)).to(self.device)
         else:
-            joints = torch.from_numpy(global_state[:, 66:129].reshape(num_envs, -1, 3)).to('cuda')
+            joints = torch.from_numpy(global_state[:, 66:129].reshape(num_envs, -1, 3)).to(self.device)
 
         af_dists = torch.cdist(joints, self.affordance_pcd)
         min_dis_af, min_idx_af = torch.min(af_dists, dim=2)

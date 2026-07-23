@@ -26,6 +26,8 @@ from scipy.spatial import KDTree
 import argparse
 from sklearn.decomposition import PCA
 
+_DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 grasp_pca = [-0.76798457, -0.7777186, -0.7385778, -0.7582664, -0.19614932, -0.75268096, 0.6672541, 0.75400156, \
              0.7918432, 0.7916097, -0.854025, 0.83326906, 0.74003863, -0.7825493, -0.83677787]
 
@@ -120,9 +122,9 @@ def get_initial_pose(obj_mesh, non_aff_mesh, easy=False):
 
     if non_aff_mesh is not None:
         aff_points, aff_face_id = trimesh.sample.sample_surface(obj_mesh, 200)
-        aff_point = torch.from_numpy(aff_points).to('cuda').unsqueeze(0)
+        aff_point = torch.from_numpy(aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_points, non_aff_face_id = trimesh.sample.sample_surface(non_aff_mesh, 200)
-        non_aff_point = torch.from_numpy(non_aff_points).to('cuda').unsqueeze(0)
+        non_aff_point = torch.from_numpy(non_aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_center = non_aff_mesh.centroid
 
 
@@ -213,9 +215,9 @@ def get_initial_pose(obj_mesh, non_aff_mesh, easy=False):
                 continue
 
         if non_aff_mesh is not None:
-            locations_torch = torch.from_numpy(locations.reshape(1,3)).to('cuda')
+            locations_torch = torch.from_numpy(locations.reshape(1,3)).to(_DEVICE)
             non_aff_points, non_aff_face_id = trimesh.sample.sample_surface(non_aff_mesh, 200)
-            non_aff_point = torch.from_numpy(non_aff_points).to('cuda').unsqueeze(0)
+            non_aff_point = torch.from_numpy(non_aff_points).to(_DEVICE).unsqueeze(0)
             non_af_dists = torch.cdist(locations_torch, non_aff_point)
             min_dis_non_af, min_idx_non_af = torch.min(non_af_dists, dim=2)
             if np.linalg.norm(locations - aff_center) > min_dis_non_af:
@@ -231,7 +233,7 @@ def get_initial_pose(obj_mesh, non_aff_mesh, easy=False):
         bias = target
 
         if non_aff_mesh is not None:
-            pos_torch = torch.from_numpy(pos.reshape(1,3)).to('cuda')
+            pos_torch = torch.from_numpy(pos.reshape(1,3)).to(_DEVICE)
             non_af_dists = torch.cdist(pos_torch, non_aff_point)
             min_dis_non_af, min_idx_non_af = torch.min(non_af_dists, dim=2)
             af_dists = torch.cdist(pos_torch, aff_point)
@@ -276,9 +278,9 @@ def get_initial_pose_universal(obj_mesh, non_aff_mesh):
 
     if non_aff_mesh is not None:
         aff_points, aff_face_id = trimesh.sample.sample_surface(obj_mesh, 200)
-        aff_point = torch.from_numpy(aff_points).to('cuda').unsqueeze(0)
+        aff_point = torch.from_numpy(aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_points, non_aff_face_id = trimesh.sample.sample_surface(non_aff_mesh, 200)
-        non_aff_point = torch.from_numpy(non_aff_points).to('cuda').unsqueeze(0)
+        non_aff_point = torch.from_numpy(non_aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_center = non_aff_mesh.centroid
 
 
@@ -421,9 +423,9 @@ def get_initial_pose_universal_demo(obj_mesh, non_aff_mesh):
 
     if non_aff_mesh is not None:
         aff_points, aff_face_id = trimesh.sample.sample_surface(obj_mesh, 200)
-        aff_point = torch.from_numpy(aff_points).to('cuda').unsqueeze(0)
+        aff_point = torch.from_numpy(aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_points, non_aff_face_id = trimesh.sample.sample_surface(non_aff_mesh, 200)
-        non_aff_point = torch.from_numpy(non_aff_points).to('cuda').unsqueeze(0)
+        non_aff_point = torch.from_numpy(non_aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_center = non_aff_mesh.centroid
 
 
@@ -570,9 +572,9 @@ def get_initial_pose_set(obj_mesh, non_aff_mesh, direction, rotation, point, han
 
     if non_aff_mesh is not None:
         aff_points, aff_face_id = trimesh.sample.sample_surface(obj_mesh, 200)
-        aff_point = torch.from_numpy(aff_points).to('cuda').unsqueeze(0)
+        aff_point = torch.from_numpy(aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_points, non_aff_face_id = trimesh.sample.sample_surface(non_aff_mesh, 200)
-        non_aff_point = torch.from_numpy(non_aff_points).to('cuda').unsqueeze(0)
+        non_aff_point = torch.from_numpy(non_aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_center = non_aff_mesh.centroid
 
 
@@ -658,9 +660,9 @@ def get_initial_pose_faive(obj_mesh, non_aff_mesh, hand_type='faive'):
 
     if non_aff_mesh is not None:
         aff_points, aff_face_id = trimesh.sample.sample_surface(obj_mesh, 200)
-        aff_point = torch.from_numpy(aff_points).to('cuda').unsqueeze(0)
+        aff_point = torch.from_numpy(aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_points, non_aff_face_id = trimesh.sample.sample_surface(non_aff_mesh, 200)
-        non_aff_point = torch.from_numpy(non_aff_points).to('cuda').unsqueeze(0)
+        non_aff_point = torch.from_numpy(non_aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_center = non_aff_mesh.centroid
 
     x_axis = np.array([1.7, 1, 0])
@@ -757,9 +759,9 @@ def get_initial_pose_faive(obj_mesh, non_aff_mesh, hand_type='faive'):
             continue
 
         if non_aff_mesh is not None:
-            locations_torch = torch.from_numpy(locations.reshape(1, 3)).to('cuda')
+            locations_torch = torch.from_numpy(locations.reshape(1, 3)).to(_DEVICE)
             non_aff_points, non_aff_face_id = trimesh.sample.sample_surface(non_aff_mesh, 200)
-            non_aff_point = torch.from_numpy(non_aff_points).to('cuda').unsqueeze(0)
+            non_aff_point = torch.from_numpy(non_aff_points).to(_DEVICE).unsqueeze(0)
             non_af_dists = torch.cdist(locations_torch, non_aff_point)
             min_dis_non_af, min_idx_non_af = torch.min(non_af_dists, dim=2)
             if np.linalg.norm(locations - aff_center) > min_dis_non_af:
@@ -775,7 +777,7 @@ def get_initial_pose_faive(obj_mesh, non_aff_mesh, hand_type='faive'):
         bias = target
 
         if non_aff_mesh is not None:
-            pos_torch = torch.from_numpy(pos.reshape(1, 3)).to('cuda')
+            pos_torch = torch.from_numpy(pos.reshape(1, 3)).to(_DEVICE)
             non_af_dists = torch.cdist(pos_torch, non_aff_point)
             min_dis_non_af, min_idx_non_af = torch.min(non_af_dists, dim=2)
             af_dists = torch.cdist(pos_torch, aff_point)
@@ -813,9 +815,9 @@ def get_initial_pose_faive_label(obj_mesh, non_aff_mesh, hand_type='faive', load
 
     if non_aff_mesh is not None:
         aff_points, aff_face_id = trimesh.sample.sample_surface(obj_mesh, 200)
-        aff_point = torch.from_numpy(aff_points).to('cuda').unsqueeze(0)
+        aff_point = torch.from_numpy(aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_points, non_aff_face_id = trimesh.sample.sample_surface(non_aff_mesh, 200)
-        non_aff_point = torch.from_numpy(non_aff_points).to('cuda').unsqueeze(0)
+        non_aff_point = torch.from_numpy(non_aff_points).to(_DEVICE).unsqueeze(0)
         non_aff_center = non_aff_mesh.centroid
 
     x_axis = np.array([1.7, 1, 0])

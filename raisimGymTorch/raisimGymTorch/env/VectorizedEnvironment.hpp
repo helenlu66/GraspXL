@@ -7,7 +7,11 @@
 #define SRC_RAISIMGYMVECENV_HPP
 
 #include "RaisimGymEnv.hpp"
+#if defined(__APPLE__) && !defined(_OPENMP)
+#include "omp_stub.h"
+#else
 #include "omp.h"
+#endif
 #include "Yaml.hpp"
 
 namespace raisim {
