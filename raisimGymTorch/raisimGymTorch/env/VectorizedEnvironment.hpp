@@ -306,6 +306,14 @@ class VectorizedEnvironment {
                   environments_[i]->switch_root_guidance(is_on);
   }
 
+  /// Broadcasts a table/support toggle to every parallel env (see
+  /// RaisimGymEnv::switch_table_support for semantics).
+  void switch_table_support(bool is_on) {
+        #pragma omp parallel for
+              for (int i = 0; i < num_envs_; i++)
+                  environments_[i]->switch_table_support(is_on);
+  }
+
   void control_switch(int left, int right) {
         #pragma omp parallel for
               for (int i = 0; i < num_envs_; i++)

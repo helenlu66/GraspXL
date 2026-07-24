@@ -93,6 +93,10 @@ class RaisimGymEnv {
   virtual void load_articulated(const std::string& obj_model){};
   virtual void load_multi_articulated(const std::vector<std::string>& obj_models){};
   virtual void switch_root_guidance(bool is_on){};
+  /// Per-env hook to disable/restore whatever physically supports the object (e.g. a
+  /// table) mid-episode. Default no-op; envs that have a removable support (currently
+  /// mano_mass_exp) override this. is_on == true means "remove support".
+  virtual void switch_table_support(bool is_on){};
   virtual void control_switch(int right, int left){};
   virtual void control_switch_all(const Eigen::Ref<EigenVec>& right, const Eigen::Ref<EigenVec>& left){};
   virtual void curriculumUpdate() {};

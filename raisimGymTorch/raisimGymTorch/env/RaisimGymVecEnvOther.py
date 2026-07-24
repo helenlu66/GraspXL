@@ -242,6 +242,14 @@ class RaisimGymVecEnvTest:
     def switch_root_guidance(self, is_on):
         self.wrapper.switch_root_guidance(is_on)
 
+    def switch_table_support(self, is_on):
+        """Toggle the table's physical support for the object (True = remove it).
+
+        Currently only implemented (non-no-op) in mano_mass_exp/Environment.hpp; other
+        envs inherit RaisimGymEnv's no-op default.
+        """
+        self.wrapper.switch_table_support(is_on)
+
     def control_switch(self, left, right):
         self.wrapper.control_switch(left, right)
 

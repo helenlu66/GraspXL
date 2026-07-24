@@ -37,6 +37,7 @@ PYBIND11_MODULE(RAISIMGYM_TORCH_ENV_NAME, m) {
     .def("get_global_state", &VectorizedEnvironment<ENVIRONMENT>::get_global_state)
     .def("set_rootguidance", &VectorizedEnvironment<ENVIRONMENT>::set_rootguidance)
     .def("switch_root_guidance", &VectorizedEnvironment<ENVIRONMENT>::switch_root_guidance)
+    .def("switch_table_support", &VectorizedEnvironment<ENVIRONMENT>::switch_table_support)
     .def("control_switch", &VectorizedEnvironment<ENVIRONMENT>::control_switch)
     .def("control_switch_all", &VectorizedEnvironment<ENVIRONMENT>::control_switch_all)
     .def("step", &VectorizedEnvironment<ENVIRONMENT>::step)
