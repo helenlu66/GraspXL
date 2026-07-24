@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<robot name="toothbrush">
+   <material name="obj_color">
+      <color rgba="1.0 0.423529411765 0.0392156862745 1.0"/>
+   </material>
+   <link name="top">
+      <inertial>
+         <origin rpy="9.591961956785078e-07 6.795045367269559e-05 6.840921940965974e-05" xyz="-0.01406826951376253 0.001551653384368577 -0.0003181123218766895"/>
+         <mass value="0.03346152545134308"/>
+         <inertia ixx="1.025897954154894e-06" ixy="-1.976483445146602e-06" ixz="7.49215600710976e-07" iyy="6.789208222520956e-05" iyz="2.196906828751169e-08" izz="6.840088909866933e-05"/>
+      </inertial>
+      <visual>
+         <origin rpy="0 0 0" xyz="0 0 0"/>
+         <geometry>
+            <mesh filename="top_watertight_tiny.stl" scale="1 1 1"/>
+         </geometry>
+         <material name="obj_color"/>
+      </visual>
+      <collision>
+         <origin rpy="0 0 0" xyz="0 0 0"/>
+         <geometry>
+            <mesh filename="top_watertight_tiny.obj" scale="1 1 1"/>
+         </geometry>
+      </collision>
+   </link>
+   <link name="bottom">
+      <inertial>
+         <origin rpy="1.633333333194242e-08 1.633333333194243e-08 1.633333333357667e-08" xyz="0.3464080000000008 0.3464080000000008 0.3464080000000008"/>
+         <mass value="0.0009800000000000017"/>
+         <inertia ixx="1.633333333248717e-08" ixy="5.447480642029219e-19" ixz="5.447480642029219e-19" iyy="1.633333333248717e-08" iyz="5.447480642029219e-19" izz="1.633333333248717e-08"/>
+      </inertial>
+      <visual>
+         <origin rpy="0 0 0" xyz="0 0 0"/>
+         <geometry>
+            <mesh filename="bottom_watertight_tiny.stl" scale="1 1 1"/>
+         </geometry>
+         <material name="obj_color"/>
+      </visual>
+   </link>
+   <joint name="rotation" type="revolute">
+      <origin xyz="0 0 0"/>
+      <axis xyz="0 0 -1"/>
+      <parent link="bottom"/>
+      <child link="top"/>
+      <dynamics damping="1.0" friction="1.0"/>
+      <limit effort="0.1" velocity="0.1" lower="0" upper="0.001"/>
+   </joint>
+</robot>

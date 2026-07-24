@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="Basket_121cf1ae08740534b8183a4a81361b94">
+   <material name="obj_color">
+      <color rgba="1.0 0.423529411765 0.0392156862745 1.0" />
+   </material>
+   <link name="top">
+      <inertial>
+         <origin rpy="0.001765264865956758 0.003573219554858712 0.004420674984669018" xyz="0.0001112642807729887 -0.0007510134456494213 0.005462927480916123" />
+         <mass value="6.272573912140656" />
+         <inertia ixx="0.008826778090320526" ixy="-5.96502003061012e-07" ixz="7.761217760135031e-05" iyy="0.017866167692816595" iyz="1.722258178716568e-05" izz="0.02210285124428531" />
+      </inertial>
+      <visual>
+         <origin rpy="0 0 0" xyz="0 0 0" />
+         <geometry>
+            <mesh filename="top_watertight_tiny.stl" scale="1 1 1" />
+         </geometry>
+         <material name="obj_color" />
+      </visual>
+      <collision>
+         <origin rpy="0 0 0" xyz="0 0 0" />
+         <geometry>
+            <mesh filename="top_watertight_tiny.obj" scale="1 1 1" />
+         </geometry>
+      </collision>
+   </link>
+   <link name="bottom">
+      <inertial>
+         <origin rpy="1.633333333331402e-08 1.633333333331402e-08 1.633333333331402e-08" xyz="0.08660200000000004 0.08660200000000004 0.08660200000000004" />
+         <mass value="0.004900000000000013" />
+         <inertia ixx="8.166666666657011e-08" ixy="-0.0" ixz="-0.0" iyy="8.166666666657011e-08" iyz="-0.0" izz="8.166666666657011e-08" />
+      </inertial>
+      <visual>
+         <origin rpy="0 0 0" xyz="0 0 0" />
+         <geometry>
+            <mesh filename="bottom_watertight_tiny.stl" scale="1 1 1" />
+         </geometry>
+         <material name="obj_color" />
+      </visual>
+   </link>
+   <joint name="rotation" type="revolute">
+      <origin xyz="0 0 0" />
+      <axis xyz="0 0 -1" />
+      <parent link="bottom" />
+      <child link="top" />
+      <dynamics damping="1.0" friction="1.0" />
+      <limit effort="0.1" velocity="0.1" lower="0" upper="0.001" />
+   </joint>
+</robot>

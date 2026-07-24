@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="WineBottle_24feb92770933b1663995fb119e59971">
+   <material name="obj_color">
+      <color rgba="1.0 0.423529411765 0.0392156862745 1.0" />
+   </material>
+   <link name="top">
+      <inertial>
+         <origin rpy="0.000121658590296845 0.0007959131202602687 0.0007959133296041233" xyz="-0.0002807664535073866 0.0001127617521065372 -0.03431773943464266" />
+         <mass value="1.7435140324177814" />
+         <inertia ixx="0.003979565676222778" ixy="2.698306892676472e-10" ixz="-9.48062359711703e-10" iyy="0.003979566573098708" iyz="-8.357332389965971e-10" izz="0.0006082929514846989" />
+      </inertial>
+      <visual>
+         <origin rpy="0 0 0" xyz="0 0 0" />
+         <geometry>
+            <mesh filename="top_watertight_tiny.stl" scale="1 1 1" />
+         </geometry>
+         <material name="obj_color" />
+      </visual>
+      <collision>
+         <origin rpy="0 0 0" xyz="0 0 0" />
+         <geometry>
+            <mesh filename="top_watertight_tiny.obj" scale="1 1 1" />
+         </geometry>
+      </collision>
+   </link>
+   <link name="bottom">
+      <inertial>
+         <origin rpy="1.601943437032209e-06 7.857210950954322e-06 7.857220968610256e-06" xyz="-0.000280692338004637 0.0001127765213909115 0.08005665969563777" />
+         <mass value="0.12066177291640079" />
+         <inertia ixx="3.928607370102259e-05" ixy="2.4291278180976063e-11" ixz="1.9312308736677615e-10" iyy="3.928608589534952e-05" iyz="-8.987926639199675e-11" izz="8.00971718661182e-06" />
+      </inertial>
+      <visual>
+         <origin rpy="0 0 0" xyz="0 0 0" />
+         <geometry>
+            <mesh filename="bottom_watertight_tiny.stl" scale="1 1 1" />
+         </geometry>
+         <material name="obj_color" />
+      </visual>
+      <collision>
+         <origin rpy="0 0 0" xyz="0 0 0" />
+         <geometry>
+            <mesh filename="bottom_watertight_tiny.obj" scale="1 1 1" />
+         </geometry>
+      </collision>
+   </link>
+   <joint name="rotation" type="revolute">
+      <origin xyz="0 0 0" />
+      <axis xyz="0 0 -1" />
+      <parent link="bottom" />
+      <child link="top" />
+      <dynamics damping="1.0" friction="1.0" />
+      <limit effort="0.1" velocity="0.1" lower="0" upper="0.001" />
+   </joint>
+</robot>
