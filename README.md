@@ -30,8 +30,9 @@
 3. [Code](#Code)
 4. [Installation](#installation)
 5. [Demo](#Demo)
-6. [Citation](#citation)
-7. [License](#license)
+6. [Adding Custom Objects (e.g. GRAB)](#adding-custom-objects-eg-grab)
+7. [Citation](#citation)
+8. [License](#license)
 
 ## News
 [2026.05] **We uploaded the GraspXL dataset to [Hugging Face](https://huggingface.co/datasets/ethHuiZhang/GraspXL). We also updated data for the new tabletop grasping setting of MANO, Allegro, and Shadow hands. For MANO, we additionally fixed the unnatural little-finger motions.**
@@ -127,13 +128,13 @@ You should be all set now. Try to run the demo!
 
 We provide some pre-trained models to view the output of our method. They are stored in [this folder](./raisimGymTorch/data_all/). 
 
-+ For interactive visualizations, you need to run
++ For interactive visualizations, start the RaiSimUnity viewer *before* running a demo/runner script (the RaiSim server it connects to keeps running either way, but you won't see anything without a connected viewer). The platform-specific binary lives under [raisimUnity](./raisimUnity) (`linux/raisimUnity.x86_64`, `mac/RaiSimUnity.app`, `m1/RaiSimUnity.app`, or `win32/RaiSimUnity.exe`) and needs the [rsc](./rsc) folder added as a resource directory with Auto-connect enabled (port 8080 by default) — do this once, it's remembered afterwards.
+
+  This repo provides a script that launches the right binary for your platform and prints exactly what to set:
 
   ```Shell
-  ./../raisimUnity/linux/raisimUnity.x86_64
+  bash scripts/launch_raisim_unity.sh   # from the GraspXL/ directory
   ```
-
-  and check the Auto-connect option.
 
 + To randomly choose an object and visualize the generated sequences in simulation (use Mano Hand as an example), run
 
@@ -148,6 +149,47 @@ You can indicate the objects or the objectives of the generated motions in the v
   The object sets include [mixed_train](./rsc/mixed_train) (the training set from [PartNet](https://partnet.cs.stanford.edu/)), [affordance_level](./rsc/affordance_level) (the PartNet test set), [large_scale_obj](./rsc/large_scale_obj) (the ShapeNet test set which you can download with [ShapeNet.zip](https://1drv.ms/u/s!ArIwHmrYW4HkoO0tm1D48rVudC4Bnw?e=DyEtsL)),  [YCB](./rsc/YCB) (reconstructed YCB objects), [gt](./rsc/gt) (groundtruth of the reconstructed YCB objects), [wild](./rsc/wild) (reconstructed in-the-wild objects), [gen](./rsc/gen) (objects generated with [DreamFusion](https://dreamfusion3d.github.io/))
 
 + The objectives are by default randomly sampled with the function get_initial_pose. You can also specify a desired objective with the function get_initial_pose_set.  [ours_demo](https://github.com/zdchan/GraspXL/blob/1e239242082ec2bae9b9eddb4895f9f4f1d640af/raisimGymTorch/raisimGymTorch/env/envs/ours_demo/demo.py#L198-L201) shows an example.
+
+
+
+## Adding Custom Objects (e.g. GRAB)
+
+Every environment loads objects from a folder under [rsc](./rsc) (the `cat_name`/`load_set` variable in each env's runner/demo script -- see [Demo](#demo) above). Each object subfolder needs:
+
+- `<name>.urdf` (+ `_fixed_base.urdf`)
+- `top_watertight_tiny.obj/.stl` -- the object mesh, loaded as the graspable "affordance" region
+- `bottom_watertight_tiny.obj/.stl` -- a second mesh for a non-graspable region. Objects with no such split (most rigid objects, including all of GRAB) get a placeholder `cube.obj` here instead; `RaisimGymVecEnvOther.py` recognizes that cube's fixed centroid and skips the non-affordance branch entirely, so the whole object is treated as graspable.
+- `lowest_point_new.txt` -- the object's resting-height offset
+
+To regenerate this from a directory of raw object meshes (`.obj`/`.ply`, one file per object -- e.g. a downloaded [GRAB](https://grab.is.tue.mpg.de/) dataset's `tools/object_meshes/contact_meshes/`):
+
+```bash
+cd raisimGymTorch/raisimGymTorch/helper/URDF_gen_from_obj
+
+# 1. Stage the source meshes as temp/<category>/<name>.obj (converts .ply -> .obj)
+python stage_meshes.py /path/to/grab/tools/object_meshes/contact_meshes --dest-category grab
+
+# 2. Convert every staged object into a URDF + top/bottom meshes
+python urdf_gen.py
+# -> writes rsc/formated_temp_obj_urdf/<name>/ for every staged object
+
+# 3. Rename to the object-set name you'll pass as --cat-name / cat_name
+mv ../../../../rsc/formated_temp_obj_urdf ../../../../rsc/grab
+
+# 4. Generate lowest_point_new.txt for every object in the new set
+cd ../../../../rsc
+python -c "from get_lowest_point import process_objects; process_objects('grab/')"
+```
+
+Then point an env at the new set. `mano_mass_exp/runner.py` exposes this as a flag:
+
+```bash
+python raisimGymTorch/env/envs/mano_mass_exp/runner.py --cat-name grab --object mug
+```
+
+Other envs' runner/demo scripts still hardcode `cat_name` (see the [Demo](#demo) section above) -- edit that variable directly, or port the same `--cat-name` argparse option over from `mano_mass_exp/runner.py`.
+
+`urdf_gen.py`'s mesh-processing helpers can optionally use `pymeshlab` and `smplx`, but only in code paths this object-only pipeline doesn't exercise (mano-hand URDF export, an alternate pymeshlab-based mesh backend) -- those imports are lazy, so the steps above work without either package installed.
 
 
 

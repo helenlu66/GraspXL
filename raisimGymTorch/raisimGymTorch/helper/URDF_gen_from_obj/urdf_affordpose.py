@@ -7,12 +7,15 @@ from xml.dom import minidom
 import numpy as np
 
 from rotation_helper import from_to_as_rot
-from mano_helpers import get_kinematic_order_mano, is_finger_joint, get_child_finger_joint_name, is_wrist, is_tip_of_finger, \
-    is_finger_part_thumb, is_right_body_joint, get_kinematic_child_joint, \
-    is_hand, is_finger_part_index, is_finger_part_other, get_limit, get_mano_part_number
+# mano_helpers pulls in smplx, which has no wheel for this environment (Python 3.9 on
+# Apple Silicon). The object-only URDF path (create_urdf_obj_new/_free, write_urdf_file)
+# never needs these mano-hand helpers, so they're imported lazily inside the functions
+# that actually use them (get_finger_part_radius, approx_mano_collision, create_urdf_tree)
+# instead of at module scope.
 
 
 def get_finger_part_radius(name):
+    from mano_helpers import is_finger_joint
     # name eg: 'right_index1'
     assert (is_finger_joint(name))
     # radius based on d-grasp mean_mano.urdf
@@ -193,6 +196,8 @@ def add_joint(root, name, orig_xyz, axis_xyz, parent_link_name,
 
 
 def approx_mano_collision(main_link, child, joints_dict, bounding_cylinder, material_contact_name=''):
+    from mano_helpers import is_finger_joint, get_child_finger_joint_name, is_tip_of_finger, \
+        is_finger_part_thumb, is_right_body_joint, is_wrist
     # child eg: 'right_index1'
     if is_finger_joint(child):
         # capsule = joint_mesh_data[child]['bounding_cylinder']
@@ -283,7 +288,8 @@ def create_urdf_tree(hand_name, joints_dict, joint_mesh_data=None, pose_limits=N
                      mesh_relative_out_path='./meshes',
                      mano_collision_approx=True,
                      rough_body_collision_approx=False):
-    
+    from mano_helpers import get_kinematic_order_mano, is_wrist, get_limit, get_mano_part_number
+
     # For fingers, there are five links for each finger.
     # Finger tip link can be egnored at first.
     # Fixed finger link can also be ignored at first

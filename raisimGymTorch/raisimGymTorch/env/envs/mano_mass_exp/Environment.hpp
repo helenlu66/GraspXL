@@ -213,7 +213,7 @@ namespace raisim {
                 aff_center_visual[6] = server_->addVisualSphere(body_parts_r_[6]+"_aff_center", 0.02, 1, 1, 0, 1); // target point: yellow
                 wrist_target[0] = server_->addVisualSphere("wrist_target", 0.03, 1, 0, 1, 1);
                 wrist_target[1] = server_->addVisualSphere("wrist_start", 0.03, 1, 0, 1, 1);
-                com_marker_ = server_->addVisualSphere("obj_com_marker", 0.015, 1, 0.5, 0, 1); // object COM: orange
+                com_marker_ = server_->addVisualSphere("obj_com_marker", 0.015, 0, 0, 1, 1); // object COM: blue
 
                 if(server_) server_->unlockVisualizationServerMutex();
             }

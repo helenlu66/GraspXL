@@ -5,12 +5,16 @@ import shutil
 import numpy as np
 import trimesh
 import trimesh.exchange.obj
-from pymeshlab.pmeshlab import MeshSet, Mesh
 from scipy.spatial.transform import Rotation as R
 from trimesh import Trimesh, convex, creation
 
 
 def process_with_pymeshlab(vertices, density):
+    # Imported lazily: pymeshlab has no wheel for this environment (Python 3.9 on
+    # Apple Silicon), and get_obj_data (the path urdf_gen.py actually uses) never
+    # calls this function -- only keep the dependency local to where it's needed.
+    from pymeshlab.pmeshlab import MeshSet, Mesh
+
     m = Mesh(vertex_matrix=vertices)
     ms = MeshSet()
     ms.add_mesh(m)
@@ -102,19 +106,23 @@ def process_mesh_with_trimesh(verts, density, show=False):
 
 def _save_mesh(mesh, out_path: str, fname: str):
     out_path_file = os.path.join(out_path, fname)
-    if isinstance(mesh, MeshSet):
-        if 'stl' in fname:
-            mesh.save_current_mesh(out_path_file, save_face_color=False, colormode=False)
-        else:
-            mesh.save_current_mesh(out_path_file, save_face_color=False)
-    elif isinstance(mesh, Trimesh):
+    if isinstance(mesh, Trimesh):
         if 'stl' in fname:
             mesh.export(out_path_file)
         else:
             vn = mesh.vertex_normals  # dummy call to compute vertex normals
             mesh.export(out_path_file, include_color=False)
     else:
-        raise ValueError('Mesh type not supported.')
+        # pymeshlab.MeshSet path -- only reachable via process_with_pymeshlab,
+        # which imports pymeshlab itself; check lazily so this module doesn't
+        # require pymeshlab just to save a Trimesh (see process_with_pymeshlab).
+        from pymeshlab.pmeshlab import MeshSet
+        if not isinstance(mesh, MeshSet):
+            raise ValueError('Mesh type not supported.')
+        if 'stl' in fname:
+            mesh.save_current_mesh(out_path_file, save_face_color=False, colormode=False)
+        else:
+            mesh.save_current_mesh(out_path_file, save_face_color=False)
 
     print(f"Saved body part to {out_path_file}.")
 

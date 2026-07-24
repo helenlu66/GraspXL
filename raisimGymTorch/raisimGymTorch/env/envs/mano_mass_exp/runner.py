@@ -9,6 +9,24 @@ object after the grasp phase. Each rollout's hand and object trajectory is recor
 ``data_all/diverse_seq_npy/<object>.npy`` and the object mesh is copied alongside to
 ``data_all/diverse_seq_obj/<object>.obj``.
 
+Rebuild the environment after making changes to Environment.hpp or RaisimGymVecEnvOther.py.
+
+To rebuild the environment, run::
+
+    bash scripts/setup_graspxl.sh
+
+Viewer: this script always runs with ``visualize=True`` (see below), which starts a
+RaiSim server that a RaiSimUnity client can connect to over TCP -- the sim runs either
+way (and still writes the recorded trajectory), but without a connected viewer you
+won't see anything. Start RaiSimUnity *before* running this script::
+
+    bash scripts/launch_raisim_unity.sh   # from the GraspXL/ directory
+
+This opens the RaiSimUnity app and prints the two things to set once in its sidebar:
+the resource directory (``GraspXL/rsc``) and Auto-connect (port 8080 by default).
+Leave Auto-connect on and it reconnects automatically on every subsequent run. See
+the top-level README's "Adding Custom Objects" / Demo sections for more detail.
+
 Usage examples (run from anywhere; paths resolve relative to this script)::
 
     # Random object from rsc/mixed_train, default mass
